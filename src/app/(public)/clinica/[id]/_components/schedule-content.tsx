@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useCallback, useEffect } from "react"
 import Image from "next/image"
 import imgTest from '../../../../../../public/foto1.png'
 import { MapPin } from "lucide-react"
@@ -12,6 +13,9 @@ import { Input } from "@/components/ui/input"
 import { formatPhone } from "@/utils/formatPhone"
 import { DateTimePicker } from "../_components/date-picker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ScheduleTimeList } from "./schedule-time-list"
+import { createNewAppointment } from "../_actions/create-appointment"
+import { toast } from "sonner"
 
 type UserWithServiceAndSubscription = Prisma.UserGetPayload<{
   include: {
@@ -24,14 +28,98 @@ interface ScheduleContentProps {
   clinic: UserWithServiceAndSubscription
 }
 
-async function handleRegisterAppointment(formData: AppointmentFormData) {
-  console.log(formData)
+export interface TimeSlot {
+  time: string;
+  available: boolean;
 }
 
 export function ScheduleContent({ clinic }: ScheduleContentProps) {
 
   const form = useAppointmentForm();
   const { watch } = form;
+
+  const selectedDate = watch("date");
+  const selectedServiceId = watch("serviceId");
+
+  const [selectedTime, setSelectedTime] = useState("");
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+
+  // Quais horarios bloqueados 01/02/2025 > ["15:00", "16:00"]
+  const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
+
+  const fetchBlockedTimes = useCallback(async (date: Date): Promise<string[]> => {
+    setLoadingSlots(true);
+    try {
+      const dateString = date.toISOString().split('T')[0];
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/schedule/get-appointments?userId=${clinic.id}&date=${dateString}`);
+
+      const json = await response.json();
+      setLoadingSlots(false);
+
+      return json;
+
+    } catch (err) {
+      console.log(err)
+      setLoadingSlots(false);
+      return [];
+    }
+
+  }, [clinic.id]);
+
+  useEffect(() => {
+
+    if (selectedDate) {
+      fetchBlockedTimes(selectedDate).then((blocked) => {
+        setBlockedTimes(blocked);
+
+        const times = clinic.times || [];
+
+        const finalSlots = times.map((time) => ({
+          time: time,
+          available: !blocked.includes(time)
+        }))
+
+        setAvailableTimeSlots(finalSlots);
+
+        const stillAvailable = finalSlots.find(
+          (slot) => slot.time === selectedTime && slot.available
+        )
+
+        if (!stillAvailable) {
+          setSelectedTime('');
+        }
+
+      });
+    }
+
+  }, [selectedDate, clinic.times, fetchBlockedTimes, selectedTime])
+
+  async function handleRegisterAppointment(formData: AppointmentFormData) {
+    if (!selectedTime) {
+      return;
+    }
+
+    const response = await createNewAppointment({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      time: selectedTime,
+      date: formData.date,
+      serviceId: formData.serviceId,
+      clinicId: clinic.id
+    })
+
+    if (response.error) {
+      toast.error(response.error)
+      return;
+    }
+
+    toast.success('Agendamento realizado com sucesso!')
+    form.reset();
+    setSelectedTime('');
+
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -177,11 +265,36 @@ export function ScheduleContent({ clinic }: ScheduleContentProps) {
               )}
             />
 
+            {selectedServiceId && (
+              <div className="space-y-2">
+                <Label className="font-semibold">Horários disponiveis:</Label>
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  {loadingSlots ? (
+                    <p>Carregando horários...</p>
+                  ) : availableTimeSlots.length === 0 ? (
+                    <p>Nenhum horário disponível.</p>
+                  ) : (
+                    <ScheduleTimeList
+                      onSelectTime={(time) => setSelectedTime(time)}
+                      clinicTimes={clinic.times}
+                      blockedTimes={blockedTimes}
+                      availableTimeSlots={availableTimeSlots}
+                      selectedTime={selectedTime}
+                      selectedDate={selectedDate}
+                      requiredSlots={
+                        clinic.services.find(service => service.id === selectedServiceId) ? Math.ceil(clinic.services.find(service => service.id === selectedServiceId)!.duration / 30) : 1
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
             {clinic.status ? (
               <Button
                 type="submit"
                 className="w-full bg-orange-500 hover:bg-orange-400 "
-                disabled={!form.watch("name") || !form.watch("email") || !form.watch("phone") || !form.watch("date")}
+                disabled={!watch("name") || !watch("email") || !watch("phone") || !watch("date")}
               >
                 Realizar agendamento
               </Button>
