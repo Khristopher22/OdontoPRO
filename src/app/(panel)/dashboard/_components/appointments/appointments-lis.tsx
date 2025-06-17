@@ -12,13 +12,13 @@ import { X, Eye } from "lucide-react"
 import { cancelAppointment } from "../../_actions/cancel-appointment"
 import { toast } from "sonner"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import { DialogAppointment } from "./dialog-appointment"
 
-type AppointmentWithService = Prisma.AppointmentGetPayload<{
+export type AppointmentWithService = Prisma.AppointmentGetPayload<{
   include: {
-    service: true
+    service: true,
   }
 }>
-
 
 interface AppointmentListProps {
   times: string[]
@@ -30,6 +30,7 @@ export function AppointmentsList({ times }: AppointmentListProps) {
   const date = searchParams.get("date");
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [detailAppointment, setDetailAppointment] = useState<AppointmentWithService | null>(null)
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["get-appointments", date],
@@ -138,6 +139,7 @@ export function AppointmentsList({ times }: AppointmentListProps) {
                             <Button
                               variant="ghost"
                               size="icon"
+                              onClick={() => setDetailAppointment(occupant)}
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
@@ -173,6 +175,11 @@ export function AppointmentsList({ times }: AppointmentListProps) {
           </ScrollArea>
         </CardContent>
       </Card>
+
+      <DialogAppointment
+        appointment={detailAppointment}
+      />
+
     </Dialog>
   )
 }
