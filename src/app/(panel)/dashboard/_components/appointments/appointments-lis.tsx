@@ -13,6 +13,7 @@ import { cancelAppointment } from "../../_actions/cancel-appointment"
 import { toast } from "sonner"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { DialogAppointment } from "./dialog-appointment"
+import { ButtonDatePickerAppointment } from "./button-date"
 
 export type AppointmentWithService = Prisma.AppointmentGetPayload<{
   include: {
@@ -48,8 +49,6 @@ export function AppointmentsList({ times }: AppointmentListProps) {
       const response = await fetch(url);
 
       const json = await response.json() as AppointmentWithService[];
-
-      console.log(json);
 
       if (!response.ok) {
         return [];
@@ -109,7 +108,7 @@ export function AppointmentsList({ times }: AppointmentListProps) {
             Agendamentos
           </CardTitle>
 
-          <button>Selecionar data</button>
+          <ButtonDatePickerAppointment />
         </CardHeader>
 
         <CardContent>

@@ -41,12 +41,15 @@ export function SidebarDashboard({ children }: { children: React.ReactNode }) {
       >
         <div className='mb-6 mt-4'>
           {!isCollapsed && (
-            <Image
-              src={logoImg}
-              alt="Logo do odontopro"
-              priority
-              quality={100}
-            />
+            <Link href="/">
+              <Image
+                src={logoImg}
+                alt="Logo do odontopro"
+                priority
+                quality={100}
+
+              />
+            </Link>
           )}
         </div>
 
