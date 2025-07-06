@@ -1,44 +1,56 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import doctorImg from '../../../../public/doctor-hero.png'
-
+import doctorImg from '../../../../public/doctor-hero.png';
 
 export function Hero() {
-  return (
-    <section className="bg-white">
-      <div className="container mx-auto px-4 pt-20 pb-4 sm:pb-0 sm:px-6 lg:px-8">
+  const scrollToClinicas = () => {
+    const section = document.getElementById("clinicas");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-        <main className="flex items-center justify-center ">
-          <article className="flex-[2] max-w-3xl space-y-8 flex flex-col justify-center">
-            <h1 className="text-4xl lg:text-5xl font-bold max-w-2xl tracking-tight">
+  return (
+    <section className="bg-white w-full h-screen flex items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full">
+        <main className="flex flex-col-reverse lg:flex-row items-center justify-between h-full">
+
+          {/* Texto proporcional */}
+          <article className="w-full lg:w-1/2 h-full flex flex-col justify-center space-y-6 text-center lg:text-left px-2 lg:px-6">
+            <h1 className="text-4xl sm:text-5xl xl:text-6xl font-bold leading-tight tracking-tight">
               Encontre os melhores profissionais em um único local!
             </h1>
-            <p className="text-base md:text-lg text-gray-600">
+
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
               Nós somos uma plataforma para profissionais da saúde com foco em agilizar seu atendimento de forma simplificada e organizada.
             </p>
 
-            <Button className="bg-orange-500 hover:bg-orange-600 w-fit px-6 font-semibold">
-              Encontre uma clinica.
-            </Button>
+            <div>
+              <Button
+                onClick={scrollToClinicas}
+                className="bg-cyan-600 hover:bg-cyan-500 px-6 py-3 text-lg font-semibold w-fit mx-auto lg:mx-0"
+              >
+                Encontre uma clínica.
+              </Button>
+            </div>
           </article>
 
-
-          <div className="hidden lg:block">
+          {/* Imagem grande colada ao rodapé */}
+          <div className="w-full lg:w-1/2 h-full flex justify-center items-end">
             <Image
               src={doctorImg}
-              alt="Foto ilustrativa de um profissional de saude"
-              width={340}
-              height={400}
-              className="object-contain"
+              alt="Foto ilustrativa de um profissional de saúde"
+              width={650}
+              height={800}
+              className="object-contain max-h-[90vh]"
               quality={100}
               priority
             />
           </div>
-
         </main>
       </div>
-
-
     </section>
-  )
+  );
 }

@@ -33,7 +33,7 @@ export function SidebarDashboard({ children }: { children: React.ReactNode }) {
     <div className='flex min-h-screen w-full'>
 
       <aside
-        className={clsx("flex flex-col border-r bg-background transition-all duration-300 p-4 h-full", {
+        className={clsx("flex flex-col border-r bg-gray-300 transition-all duration-300 p-4 h-full", {
           "w-20": isCollapsed,
           "w-64": !isCollapsed,
           "hidden md:flex md:fixed": true
@@ -240,7 +240,7 @@ function SidebarLink({ href, icon, isCollapsed, label, pathname }: SidebarLinkPr
       <div
         className={clsx("flex items-center gap-2 px-3 py-2 rounded-md transition-colors", {
           "text-white bg-blue-500": pathname === href,
-          "text-gray-700 hover:bg-gray-100": pathname !== href,
+          "text-gray-700 hover:bg-gray-400": pathname !== href,
         })}
       >
         <span className='w-6 h-6'>{icon}</span>

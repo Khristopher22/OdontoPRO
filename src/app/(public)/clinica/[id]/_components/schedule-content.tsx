@@ -123,7 +123,7 @@ export function ScheduleContent({ clinic }: ScheduleContentProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="h-32 bg-orange-500" />
+      <div className="h-32 bg-cyan-500" />
 
       <section className="container mx-auto px-4 -mt-16">
         <div className="max-w-2xl mx-auto">
@@ -297,7 +297,7 @@ export function ScheduleContent({ clinic }: ScheduleContentProps) {
             {clinic.status ? (
               <Button
                 type="submit"
-                className="w-full bg-orange-500 hover:bg-orange-400 "
+                className="w-full bg-cyan-500 hover:bg-cyan-400 "
                 disabled={!watch("name") || !watch("email") || !watch("phone") || !watch("date")}
               >
                 Realizar agendamento

@@ -112,7 +112,7 @@ export function AppointmentsList({ times }: AppointmentListProps) {
         </CardHeader>
 
         <CardContent>
-          <ScrollArea className="h-[calc(100vh-20rem)] lg:h-[calc(100vh-15rem)] pr-4">
+          <ScrollArea className=" sm:max-h-[780px] h-[calc(100vh-20rem)] lg:h-[calc(100vh-15rem)] pr-4">
             {isLoading ? (
               <p>Carregando agendamentos...</p>
             ) : (
