@@ -17,7 +17,6 @@ export function Hero() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <main className="flex flex-col-reverse lg:flex-row items-center justify-between h-full">
 
-          {/* Texto proporcional */}
           <article className="w-full lg:w-1/2 h-full flex flex-col justify-center space-y-6 text-center lg:text-left px-2 lg:px-6">
             <h1 className="text-4xl sm:text-5xl xl:text-6xl font-bold leading-tight tracking-tight">
               Encontre os melhores profissionais em um único local!
@@ -37,16 +36,13 @@ export function Hero() {
             </div>
           </article>
 
-          {/* Imagem grande colada ao rodapé */}
           <div className="w-full lg:w-1/2 h-full flex justify-center items-end">
             <Image
               src={doctorImg}
               alt="Foto ilustrativa de um profissional de saúde"
-              width={650}
-              height={800}
-              className="object-contain max-h-[90vh]"
               quality={100}
               priority
+              className="object-contain w-[200px] sm:w-[250px] md:w-[350px] lg:w-[500px] xl:w-[650px] 2xl:w-[700px]  max-h-[90vh] "
             />
           </div>
         </main>
